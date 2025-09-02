@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create_card_table" author="your_name">
+        <createTable tableName="card">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="card_number" type="VARCHAR(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="masked_number" type="VARCHAR(255)"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expiry_date" type="DATE"/>
+            <column name="is_expired" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="status" type="VARCHAR(50)" defaultValue="ACTIVE"/>
+            <column name="balance" type="DECIMAL(19, 2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addAutoIncrement
+                tableName="card"
+                columnName="id"
+                startWith="1"
+                incrementBy="1"/>
+
+        <addForeignKeyConstraint
+                baseTableName="card"
+                baseColumnNames="user_id"
+                referencedTableName="user"
+                referencedColumnNames="id"
+                constraintName="fk_card_user"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+
+        <createIndex
+                indexName="idx_card_user_id"
+                tableName="card">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex
+                indexName="idx_card_number"
+                tableName="card"
+                unique="true">
+            <column name="card_number"/>
+        </createIndex>
+
+        <createIndex
+                indexName="idx_card_status"
+                tableName="card">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

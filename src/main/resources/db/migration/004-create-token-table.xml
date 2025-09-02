@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create_token_table" author="your_name">
+        <createTable tableName="token">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="token" type="VARCHAR(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="expiry_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addAutoIncrement
+                tableName="token"
+                columnName="id"
+                startWith="1"
+                incrementBy="1"/>
+
+        <addForeignKeyConstraint
+                baseTableName="token"
+                baseColumnNames="user_id"
+                referencedTableName="user"
+                referencedColumnNames="id"
+                constraintName="fk_token_user"
+                onDelete="CASCADE"
+                onUpdate="CASCADE"/>
+
+        <createIndex
+                indexName="idx_token_user_id"
+                tableName="token">
+            <column name="user_id"/>
+        </createIndex>
+
+        <createIndex
+                indexName="idx_token_expiry_at"
+                tableName="token">
+            <column name="expiry_at"/>
+        </createIndex>
+
+        <createIndex
+                indexName="idx_token_created_at"
+                tableName="token">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

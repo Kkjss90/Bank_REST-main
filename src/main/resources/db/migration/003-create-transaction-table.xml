@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+    <changeSet id="create_transaction_table" author="your_name">
+        <createTable tableName="transaction">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="amount" type="DECIMAL(19, 2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="from_card_id" type="BIGINT"/>
+            <column name="to_card_id" type="BIGINT"/>
+            <column name="description" type="VARCHAR(500)"/>
+            <column name="status" type="VARCHAR(50)" defaultValue="PENDING">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addAutoIncrement
+                tableName="transaction"
+                columnName="id"
+                startWith="1"
+                incrementBy="1"/>
+
+        <!-- Внешние ключи -->
+        <addForeignKeyConstraint
+                baseTableName="transaction"
+                baseColumnNames="from_card_id"
+                referencedTableName="card"
+                referencedColumnNames="id"
+                constraintName="fk_transaction_from_card"
+                onDelete="SET NULL"
+                onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="transaction"
+                baseColumnNames="to_card_id"
+                referencedTableName="card"
+                referencedColumnNames="id"
+                constraintName="fk_transaction_to_card"
+                onDelete="SET NULL"
+                onUpdate="CASCADE"/>
+
+        <!-- Индексы -->
+        <createIndex
+                indexName="idx_transaction_from_card_id"
+                tableName="transaction">
+            <column name="from_card_id"/>
+        </createIndex>
+
+        <createIndex
+                indexName="idx_transaction_to_card_id"
+                tableName="transaction">
+            <column name="to_card_id"/>
+        </createIndex>
+
+        <createIndex
+                indexName="idx_transaction_status"
+                tableName="transaction">
+            <column name="status"/>
+        </createIndex>
+
+        <createIndex
+                indexName="idx_transaction_created_at"
+                tableName="transaction">
+            <column name="created_at"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
