@@ -66,7 +66,7 @@ public class TokenServiceImpl implements TokenService {
         return Jwts.builder().setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(expiry)
-                .signWith(key(), SignatureAlgorithm.HS512).compact();
+                .signWith(key(), SignatureAlgorithm.HS256).compact();
     }
 
     @Override

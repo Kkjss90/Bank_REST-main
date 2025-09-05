@@ -1,13 +1,16 @@
 package com.example.bankcards.service.implementation;
 
 import com.example.bankcards.dto.request.SignInRequest;
-import com.example.bankcards.dto.request.SignUpRequest;
+import com.example.bankcards.dto.request.UserRequest;
 import com.example.bankcards.dto.response.JwtAuthenticationResponse;
-import com.example.bankcards.entity.enums.RoleEnum;
+import com.example.bankcards.entity.Token;
+import com.example.bankcards.exception.InvalidTokenException;
+import com.example.bankcards.repository.TokenRepository;
 import com.example.bankcards.service.AuthService;
 import com.example.bankcards.service.TokenService;
 import com.example.bankcards.service.UserService;
 import com.example.bankcards.entity.User;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,19 +31,17 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     @Autowired
     private final AuthenticationManager authenticationManager;
+    @Autowired
+    private final TokenRepository tokenRepository;
 
-    public JwtAuthenticationResponse signUp(SignUpRequest request) {
+    @SneakyThrows
+    public JwtAuthenticationResponse signUp(UserRequest userRequest) {
 
-        var user = User.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(RoleEnum.ROLE_USER)
-                .build();
+        userService.createUser(userRequest);
 
-        userService.createUser(user);
+        var jwt = jwtService.generateToken(userService.getUserByUsername(userRequest.getUsername()));
 
-        var jwt = jwtService.generateToken(user);
+        jwtService.saveToken(jwt);
         return new JwtAuthenticationResponse(jwt);
     }
 
@@ -50,11 +51,27 @@ public class AuthServiceImpl implements AuthService {
                 request.getPassword()
         ));
 
-        var user = userService
-                .userDetailsService()
-                .loadUserByUsername(request.getUsername());
+//        var user = userService
+//                .userDetailsService()
+//                .loadUserByUsername(request.getUsername());
+        User user = userService.getUserByUsername(request.getUsername());
 
-        var jwt = jwtService.generateToken(user);
-        return new JwtAuthenticationResponse(jwt);
+        //var jwt = jwtService.generateToken(user);
+        Token jwt = tokenRepository.findByUser(user);
+        try {
+            jwtService.validateToken(jwt.getToken());
+        }
+        catch (Exception e) {
+            String newToken = jwtService.generateToken(user);
+
+            try {
+                jwtService.saveToken(newToken);
+            } catch (InvalidTokenException ex) {
+                throw new RuntimeException(ex);
+            }
+            return new JwtAuthenticationResponse(newToken);
+        }
+
+        return new JwtAuthenticationResponse(jwt.getToken());
     }
 }

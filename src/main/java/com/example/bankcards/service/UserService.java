@@ -1,5 +1,7 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.dto.request.UserRequest;
+import com.example.bankcards.dto.response.UserResponse;
 import com.example.bankcards.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -11,7 +13,8 @@ public interface UserService {
     Optional<User> getUserById(Long id);
     User getUserByUsername(String username);
     Optional<User> getUserByEmail(String email);
-    User createUser(User user);
+//    User createUser(User user)
+    UserResponse createUser(UserRequest userRequest);
     User updateUser(Long id, User userDetails);
     void deleteUser(Long id);
     boolean existsByUsername(String username);

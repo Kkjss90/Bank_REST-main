@@ -30,20 +30,27 @@ spring:
     enabled: true
 
 jwt:
-  secret: your_jwt_secret_key_min_64_chars_long_please_change_this_in_production
+  secret: 6L+Z5piv5LiN5Liq5Lq655qE5a+G56CB5LiN6KaB5rGC5L2P5ZCO5Y+w5LiN5Y+v5Lul
   expiration: 86400000
-  jwt.header: Authorization
-  jwt.prefix: Bearer
+  header: Authorization
+  prefix: Bearer
 
 encryption:
-  key: your_encryption_key_32chars
+  key: my_very_secure_secret_key_that_is_long_enough_32_chars
 
 springdoc:
-  api-docs:
-    path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
     enabled: true
+    display-request-duration: true
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
 
 logging:
   level:

@@ -1,10 +1,12 @@
 package com.example.bankcards.service.implementation;
 
 import com.example.bankcards.dto.request.TransactionRequest;
+import com.example.bankcards.dto.response.TransactionResponse;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.Transaction;
 import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.entity.enums.TransactionStatus;
+import com.example.bankcards.mapper.Mapper;
 import com.example.bankcards.repository.TransactionRepository;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.service.TransactionService;
@@ -20,12 +22,14 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final CardService cardService;
+    private final Mapper mapper;
 
     @Autowired
     public TransactionServiceImpl(TransactionRepository transactionRepository, 
-                                 CardService cardService) {
+                                 CardService cardService, Mapper mapper) {
         this.transactionRepository = transactionRepository;
         this.cardService = cardService;
+        this.mapper = mapper;
     }
     
     @Override
@@ -45,7 +49,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Transactional
     @Override
-    public Transaction transferBetweenCards(TransactionRequest transactionRequest) {
+    public TransactionResponse transferBetweenCards(TransactionRequest transactionRequest) {
         Card fromCard = cardService.getCardById(transactionRequest.getFromCardId())
                 .orElseThrow(() -> new RuntimeException("Source account not found"));
         
@@ -60,7 +64,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
         
         Transaction transaction = new Transaction();
-        transaction.setAmount(transaction.getAmount());
+        transaction.setAmount(transactionRequest.getAmount());
         transaction.setFromCard(fromCard);
         transaction.setToCard(toCard);
         transaction.setDescription(transactionRequest.getDescription());
@@ -73,7 +77,8 @@ public class TransactionServiceImpl implements TransactionService {
             cardService.depositToCard(transactionRequest.getToCardId(), transactionRequest.getAmount());
             
             savedTransaction.setStatus(TransactionStatus.COMPLETED);
-            return transactionRepository.save(savedTransaction);
+            Transaction transactionResp = transactionRepository.save(savedTransaction);
+            return mapper.dtoToResponse(transactionResp);
             
         } catch (Exception e) {
             savedTransaction.setStatus(TransactionStatus.FAILED);

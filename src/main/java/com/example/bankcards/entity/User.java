@@ -3,6 +3,7 @@ package com.example.bankcards.entity;
 import com.example.bankcards.entity.enums.RoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,9 +13,9 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "user")
+@Table(name = "user_bank")
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @AllArgsConstructor
 public class User implements UserDetails {
@@ -40,6 +41,8 @@ public class User implements UserDetails {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
+    @Column(name = "created_at", nullable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)

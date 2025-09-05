@@ -1,6 +1,9 @@
 package com.example.bankcards.service.implementation;
 
+import com.example.bankcards.dto.request.UserRequest;
+import com.example.bankcards.dto.response.UserResponse;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.mapper.Mapper;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +22,13 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final Mapper mapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, Mapper mapper) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mapper = mapper;
     }
 
     @Override
@@ -46,10 +51,18 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email);
     }
 
+//    @Override
+//    public User createUser(User user) {
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        return userRepository.save(user);
+//    }
+
     @Override
-    public User createUser(User user) {
+    public UserResponse createUser(UserRequest userRequest) {
+        User user = mapper.RequestToDto(userRequest);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+        userRepository.save(user);
+        return mapper.dtoToResponse(user);
     }
 
     @Override
@@ -59,6 +72,7 @@ public class UserServiceImpl implements UserService {
                     user.setFirstName(userDetails.getFirstName());
                     user.setLastName(userDetails.getLastName());
                     user.setEmail(userDetails.getEmail());
+                    user.setRole(userDetails.getRole());
                     return userRepository.save(user);
                 })
                 .orElseThrow(() -> new RuntimeException("User not found"));

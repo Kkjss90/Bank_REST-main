@@ -27,16 +27,16 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 @EnableTransactionManagement
 @RequiredArgsConstructor
+@EnableMethodSecurity(prePostEnabled = true)
 //@ComponentScan(basePackages = {
 //        "com.example.bankcards"})
 public class WebSecurityConfig {
 
     private static final String[] PUBLIC_URLS = {
-            "/api/users/register",
-            "/api/users/login",
+            "/api/auth/sign-up",
+            "/api/auth/sign-in",
             "swagger-ui.html",
             "/v3/api-docs/**",
             "/swagger-ui/**",
@@ -45,12 +45,6 @@ public class WebSecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final TokenService tokenService;
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(tokenService).passwordEncoder(passwordEncoder());
-    }
 
     @Bean
     PasswordEncoder passwordEncoder() {

@@ -15,7 +15,7 @@
     </changeSet>
 
     <changeSet id="create_user_table" author="your_name">
-        <createTable tableName="user">
+        <createTable tableName="user_bank">
             <column name="id" type="BIGINT" defaultValueSequenceNext="user_id_seq">
                 <constraints primaryKey="true" nullable="false"/>
             </column>

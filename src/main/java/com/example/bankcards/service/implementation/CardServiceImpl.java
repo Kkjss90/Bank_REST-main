@@ -1,9 +1,11 @@
 package com.example.bankcards.service.implementation;
 
+import com.example.bankcards.dto.response.CardResponse;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.InsufficientFundsException;
+import com.example.bankcards.mapper.Mapper;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.util.CardNumberEncryptor;
@@ -13,9 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,8 +34,12 @@ public class CardServiceImpl implements CardService {
     }
     
     @Override
-    public List<Card> getAllCards() {
-        return cardRepository.findAll();
+    public List<CardResponse> getAllCards() {
+        List<Card> cards = cardRepository.findAll();
+        List<CardResponse> cardResponses = cards.stream()
+                .map(Mapper::dtoToResponse)
+                .collect(Collectors.toList());;
+        return cardResponses;
     }
     
     @Override
@@ -51,44 +58,68 @@ public class CardServiceImpl implements CardService {
     }
     
     @Override
-    public List<Card> getUserCards(User user) {
-        return cardRepository.findByUser(user);
+    public List<CardResponse> getUserCards(User user) {
+        List<Card> cards = cardRepository.findByUserId(user.getId());
+        List<CardResponse> cardResponses = cards.stream()
+                .map(Mapper::dtoToResponse)
+                .collect(Collectors.toList());
+        return cardResponses;
     }
     
     @Override
     public List<Card> getCardsByStatus(CardStatus status) {
         return cardRepository.findByStatus(status);
     }
-    
+
     @Override
-    public Card createCard(User user) {
+    public List<CardResponse> getCardsByUserAndStatus(User user, CardStatus status) {
+        List<Card> cards = cardRepository.findByUser(user);
+        List<CardResponse> filteredCards = new ArrayList<>();
+        for (Card card : cards) {
+            if (card.getStatus().equals(status)) {
+                filteredCards.add(Mapper.dtoToResponse(card));
+            }
+        }
+        return filteredCards;
+    }
+
+    @Override
+    public CardResponse createCard(User user, String currency) {
         Card card = new Card();
         card.setUser(user);
         card.setCardNumber(cardNumberEncryptor.generateCardNumber());
         card.setMaskedNumber(cardNumberEncryptor.maskCardNumber(card.getCardNumber()));
+        card.setCurrency(currency);
         card.setExpiryDate(LocalDate.now().plusYears(3));
         card.setStatus(CardStatus.ACTIVE);
         card.setBalance(BigDecimal.ZERO);
-        
-        return cardRepository.save(card);
+        cardRepository.save(card);
+        return Mapper.dtoToResponse(card);
     }
-    
+
     @Override
-    public Card blockCard(Long cardId) {
+    public void deleteCard(Long cardId) {
+        cardRepository.deleteById(cardId);
+    }
+
+    @Override
+    public void blockCard(Long cardId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new RuntimeException("Card not found"));
         
         card.setStatus(CardStatus.BLOCKED);
-        return cardRepository.save(card);
+        card.setActive(false);
+        cardRepository.save(card);
     }
     
     @Override
-    public Card activateCard(Long cardId) {
+    public void activateCard(Long cardId) {
         Card card = cardRepository.findById(cardId)
                 .orElseThrow(() -> new RuntimeException("Card not found"));
         
         card.setStatus(CardStatus.ACTIVE);
-        return cardRepository.save(card);
+        card.setActive(true);
+        cardRepository.save(card);
     }
     
     @Override
@@ -114,8 +145,8 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public boolean cardExists(String cardNumber) {
-        return cardRepository.existsByCardNumber(cardNumber);
+    public boolean cardExists(Long cardId) {
+        return cardRepository.existsById(cardId);
     }
 
 }

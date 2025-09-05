@@ -3,17 +3,15 @@ package com.example.bankcards.entity;
 import com.example.bankcards.entity.enums.TransactionStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transaction")
 @Data
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
 public class Transaction {
 
@@ -22,6 +20,7 @@ public class Transaction {
     private Long id;
 
     @Positive
+    @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
     @ManyToOne

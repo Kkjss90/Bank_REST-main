@@ -33,7 +33,7 @@
         <addForeignKeyConstraint
                 baseTableName="token"
                 baseColumnNames="user_id"
-                referencedTableName="user"
+                referencedTableName="user_bank"
                 referencedColumnNames="id"
                 constraintName="fk_token_user"
                 onDelete="CASCADE"

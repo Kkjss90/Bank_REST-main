@@ -3,13 +3,14 @@ package com.example.bankcards.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Data
 @Table(name = "token")
 public class Token {
