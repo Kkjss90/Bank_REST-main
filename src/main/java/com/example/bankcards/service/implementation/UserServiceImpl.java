@@ -1,6 +1,7 @@
 package com.example.bankcards.service.implementation;
 
 import com.example.bankcards.dto.request.UserRequest;
+import com.example.bankcards.dto.request.UserUpdateRequest;
 import com.example.bankcards.dto.response.UserResponse;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.mapper.Mapper;
@@ -66,7 +67,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User updateUser(Long id, User userDetails) {
+    public User updateUser(Long id, UserUpdateRequest userDetails) {
         return userRepository.findById(id)
                 .map(user -> {
                     user.setFirstName(userDetails.getFirstName());

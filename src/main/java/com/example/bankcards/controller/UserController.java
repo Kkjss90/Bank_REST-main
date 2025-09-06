@@ -1,7 +1,7 @@
 package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.request.UserRequest;
-import com.example.bankcards.entity.User;
+import com.example.bankcards.dto.request.UserUpdateRequest;
 import com.example.bankcards.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -40,7 +40,7 @@ public class UserController {
 
     @PatchMapping("/role-update/{user_id}")
     @Operation (summary = "Изменение пользователя", description = "Изменение имени, фамилии, почты и роли пользователя")
-    public ResponseEntity<?> updateRole(@PathVariable Long user_id, @Valid @RequestBody User userDetails) {
+    public ResponseEntity<?> updateRole(@PathVariable Long user_id, @Valid @RequestBody UserUpdateRequest userDetails) {
         userService.updateUser(user_id, userDetails);
         return ResponseEntity.ok().build();
     }
