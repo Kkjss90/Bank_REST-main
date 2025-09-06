@@ -11,6 +11,7 @@ import static org.springframework.security.core.userdetails.User.withUsername;
 import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.example.bankcards.util.ApiMessages;
 import io.jsonwebtoken.*;
@@ -65,6 +66,9 @@ public class TokenServiceImpl implements TokenService {
     private String doGenerateToken(UserDetails userDetails, Date expiry) {
         return Jwts.builder().setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
+                .claim("authorities", userDetails.getAuthorities().stream()
+                        .map(grantedAuthority -> grantedAuthority.getAuthority())
+                        .collect(Collectors.toList()))
                 .setExpiration(expiry)
                 .signWith(key(), SignatureAlgorithm.HS256).compact();
     }
@@ -75,7 +79,10 @@ public class TokenServiceImpl implements TokenService {
                 .orElseThrow(() -> new UsernameNotFoundException(
                         String.format(ApiMessages.USER_NOT_FOUND_BY_ACCOUNT.getMessage(), accountNumber)));
 
-        return withUsername(accountNumber).password(user.getPassword()).build();
+        return withUsername(accountNumber)
+                .password(user.getPassword())
+                .authorities(String.valueOf(user.getRole()))
+                .build();
     }
 
     @Override
