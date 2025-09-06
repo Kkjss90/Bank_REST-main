@@ -8,12 +8,15 @@ import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.service.TransactionService;
 import com.example.bankcards.service.UserService;
+import com.example.bankcards.util.PaginationUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cards")
@@ -33,18 +37,29 @@ public class CardController {
     private UserService userService;
     @Autowired
     private TransactionService transactionService;
+    @Autowired
+    private PaginationUtils paginationUtils;
 
-    @GetMapping("/my_cards")
+
+    @GetMapping("/my-cards")
     @Operation(summary = "Получить мои карты", description = "Возвращает список карт текущего пользователя")
-    public ResponseEntity<List<CardResponse>> getUserCards(Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> getUserCards(Authentication authentication,
+                                                            @RequestParam(required = false) Integer page,
+                                                            @RequestParam(required = false) Integer size,
+                                                            @RequestParam(required = false) String sortBy,
+                                                            @RequestParam(required = false) String direction,
+                                                            @RequestParam(required = false) String search) {
         if (authentication == null) {
             return ResponseEntity.badRequest().build();
         }
-        List<CardResponse> response = cardService.getUserCards(userService.getUserByUsername(authentication.getName()));
-        return ResponseEntity.ok(response);
+        Pageable pageable = paginationUtils.createPageable(page, size, sortBy, direction);
+        Page<CardResponse> cardsPage = cardService.getUserCardsPaginated(
+                userService.getUserByUsername(authentication.getName()), search, pageable);
+
+        return ResponseEntity.ok(paginationUtils.buildPaginationResponse(cardsPage));
     }
 
-    @GetMapping("/my_cards/active")
+    @GetMapping("/my-cards/active")
     @Operation(summary = "Получить мои активные карты", description = "Возвращает список активных карт текущего пользователя")
     public ResponseEntity<List<CardResponse>> getUserCardsActive(Authentication authentication) {
         if (authentication == null) {

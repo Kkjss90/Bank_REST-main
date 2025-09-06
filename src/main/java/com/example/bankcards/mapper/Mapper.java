@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Mapper {
 
-    public static CardResponse dtoToResponse(Card card) {
+    public CardResponse dtoToResponse(Card card) {
         return new CardResponse(
                 card.getMaskedNumber(),
                 card.getUser().getFirstName() + " " + card.getUser().getLastName(),

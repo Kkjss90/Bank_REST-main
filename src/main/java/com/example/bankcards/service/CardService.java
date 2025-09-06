@@ -4,6 +4,9 @@ import com.example.bankcards.dto.response.CardResponse;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +17,7 @@ public interface CardService {
     Optional<Card> getCardByNumber(String cardNumber);
     List<Card> getUserCards(Long userId);
     List<CardResponse> getUserCards(User user);
+    Page<CardResponse> getUserCardsPaginated(User user, String search, Pageable pageable);
     List<Card> getCardsByStatus(CardStatus status);
     List<CardResponse> getCardsByUserAndStatus(User user, CardStatus status);
     CardResponse createCard(User user, String currency);

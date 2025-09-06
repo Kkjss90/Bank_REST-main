@@ -19,7 +19,7 @@ public class PaginationUtils {
         Sort.Direction sortDirection = "desc".equalsIgnoreCase(direction) 
             ? Sort.Direction.DESC : Sort.Direction.ASC;
         
-        return PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+        return PageRequest.of(page-1, size, Sort.by(sortDirection, sortBy));
     }
     
     public Map<String, Object> buildPaginationResponse(Page<?> page) {

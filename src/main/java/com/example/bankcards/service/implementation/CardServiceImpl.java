@@ -10,6 +10,8 @@ import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.util.CardNumberEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,18 +28,20 @@ public class CardServiceImpl implements CardService {
     
     private final CardRepository cardRepository;
     private final CardNumberEncryptor cardNumberEncryptor;
+    private  final Mapper mapper;
 
     @Autowired
-    public CardServiceImpl(CardRepository cardRepository, CardNumberEncryptor cardNumberEncryptor) {
+    public CardServiceImpl(CardRepository cardRepository, CardNumberEncryptor cardNumberEncryptor, Mapper mapper) {
         this.cardRepository = cardRepository;
         this.cardNumberEncryptor = cardNumberEncryptor;
+        this.mapper = mapper;
     }
     
     @Override
     public List<CardResponse> getAllCards() {
         List<Card> cards = cardRepository.findAll();
         List<CardResponse> cardResponses = cards.stream()
-                .map(Mapper::dtoToResponse)
+                .map(mapper::dtoToResponse)
                 .collect(Collectors.toList());;
         return cardResponses;
     }
@@ -61,11 +65,23 @@ public class CardServiceImpl implements CardService {
     public List<CardResponse> getUserCards(User user) {
         List<Card> cards = cardRepository.findByUserId(user.getId());
         List<CardResponse> cardResponses = cards.stream()
-                .map(Mapper::dtoToResponse)
+                .map(mapper::dtoToResponse)
                 .collect(Collectors.toList());
         return cardResponses;
     }
-    
+
+    @Override
+    public Page<CardResponse> getUserCardsPaginated(User user, String search, Pageable pageable) {
+        Page<Card> cardsPage;
+        if (search == null || search.isEmpty()) {
+            cardsPage = cardRepository.findByUser(user, pageable);
+        }
+        else {
+            cardsPage = cardRepository.findByCardNumber(search, pageable);
+        }
+        return cardsPage.map(mapper::dtoToResponse);
+    }
+
     @Override
     public List<Card> getCardsByStatus(CardStatus status) {
         return cardRepository.findByStatus(status);
@@ -77,7 +93,7 @@ public class CardServiceImpl implements CardService {
         List<CardResponse> filteredCards = new ArrayList<>();
         for (Card card : cards) {
             if (card.getStatus().equals(status)) {
-                filteredCards.add(Mapper.dtoToResponse(card));
+                filteredCards.add(mapper.dtoToResponse(card));
             }
         }
         return filteredCards;
@@ -94,7 +110,7 @@ public class CardServiceImpl implements CardService {
         card.setStatus(CardStatus.ACTIVE);
         card.setBalance(BigDecimal.ZERO);
         cardRepository.save(card);
-        return Mapper.dtoToResponse(card);
+        return mapper.dtoToResponse(card);
     }
 
     @Override
