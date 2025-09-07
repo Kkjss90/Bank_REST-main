@@ -199,7 +199,7 @@ class AuthServiceImplTest {
         doThrow(new InvalidTokenException("Save failed"))
                 .when(tokenService).saveToken(newToken);
 
-        assertThrows(RuntimeException.class, () ->
+        assertThrows(InvalidTokenException.class, () ->
                 authService.signIn(signInRequest));
 
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));

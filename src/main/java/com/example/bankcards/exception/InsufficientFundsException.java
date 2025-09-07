@@ -1,7 +1,10 @@
 package com.example.bankcards.exception;
 
+import lombok.Getter;
+
 import java.math.BigDecimal;
 
+@Getter
 public class InsufficientFundsException extends RuntimeException {
     private final BigDecimal availableBalance;
     private final BigDecimal requestedAmount;
@@ -12,11 +15,4 @@ public class InsufficientFundsException extends RuntimeException {
         this.requestedAmount = requestedAmount;
     }
 
-    public BigDecimal getAvailableBalance() {
-        return availableBalance;
-    }
-
-    public BigDecimal getRequestedAmount() {
-        return requestedAmount;
-    }
 }

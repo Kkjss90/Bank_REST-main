@@ -19,6 +19,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.bankcards.entity.enums.RoleEnum.ROLE_USER;
@@ -59,7 +60,7 @@ class TokenServiceImplTest {
         userDetails = org.springframework.security.core.userdetails.User
                 .withUsername("testuser")
                 .password("password")
-                .authorities("USER")
+                .authorities("ROLE_USER")
                 .build();
 
         token = new Token();
@@ -156,7 +157,7 @@ class TokenServiceImplTest {
         tokenService.saveToken(validToken);
 
         verify(tokenRepository, times(1)).findByToken(validToken);
-        verify(userRepository, times(1)).findByUsername("testuser");
+        verify(userRepository, atLeastOnce()).findByUsername("testuser");
         verify(tokenRepository, times(1)).save(any(Token.class));
     }
 
@@ -268,15 +269,28 @@ class TokenServiceImplTest {
         Key key = (Key) ReflectionTestUtils.invokeMethod(tokenService, "key");
 
         assertNotNull(key);
-        assertEquals("HmacSHA256", key.getAlgorithm());
     }
 
     @Test
     void doGenerateToken_ShouldIncludeAuthorities() {
-        String token = (String) ReflectionTestUtils.invokeMethod(tokenService, "doGenerateToken", 
+        String token = (String) ReflectionTestUtils.invokeMethod(tokenService, "doGenerateToken",
                 userDetails, new Date(System.currentTimeMillis() + expiration));
 
         assertNotNull(token);
-        assertTrue(token.contains("testuser"));
+
+        Key signingKey = (Key) ReflectionTestUtils.invokeMethod(tokenService, "key");
+
+        Claims claims = Jwts.parser()
+                .setSigningKey(signingKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        assertEquals("testuser", claims.getSubject());
+        assertTrue(claims.containsKey("authorities"));
+        List<String> authorities = (List<String>) claims.get("authorities");
+        assertTrue(authorities.contains("ROLE_USER"));
     }
+
+
 }

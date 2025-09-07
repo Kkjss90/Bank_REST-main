@@ -4,10 +4,12 @@ import com.example.bankcards.dto.response.CardResponse;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.CardException;
 import com.example.bankcards.exception.InsufficientFundsException;
 import com.example.bankcards.mapper.Mapper;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.service.CardService;
+import com.example.bankcards.util.ApiMessages;
 import com.example.bankcards.util.CardNumberEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -121,7 +123,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public void blockCard(Long cardId) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
+                .orElseThrow(() -> new CardException(ApiMessages.CARD_NOT_FOUND.getMessage()));
         
         card.setStatus(CardStatus.BLOCKED);
         card.setActive(false);
@@ -131,7 +133,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public void activateCard(Long cardId) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
+                .orElseThrow(() -> new CardException(ApiMessages.CARD_NOT_FOUND.getMessage()));
         
         card.setStatus(CardStatus.ACTIVE);
         card.setActive(true);
@@ -141,7 +143,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public Card depositToCard(Long cardId, BigDecimal amount) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
+                .orElseThrow(() -> new CardException(ApiMessages.CARD_NOT_FOUND.getMessage()));
         
         card.setBalance(card.getBalance().add(amount));
         return cardRepository.save(card);
@@ -150,7 +152,7 @@ public class CardServiceImpl implements CardService {
     @Override
     public Card withdrawFromCard(Long cardId, BigDecimal amount) {
         Card card = cardRepository.findById(cardId)
-                .orElseThrow(() -> new RuntimeException("Card not found"));
+                .orElseThrow(() -> new CardException(ApiMessages.CARD_NOT_FOUND.getMessage()));
 
         if (card.getBalance().compareTo(amount) < 0) {
             throw new InsufficientFundsException(card.getBalance(), amount);

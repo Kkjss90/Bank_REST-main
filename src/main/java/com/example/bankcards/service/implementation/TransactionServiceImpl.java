@@ -6,10 +6,14 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.Transaction;
 import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.entity.enums.TransactionStatus;
+import com.example.bankcards.exception.ActiveCardsException;
+import com.example.bankcards.exception.InsufficientFundsException;
+import com.example.bankcards.exception.TransferException;
 import com.example.bankcards.mapper.Mapper;
 import com.example.bankcards.repository.TransactionRepository;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.service.TransactionService;
+import com.example.bankcards.util.ApiMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,16 +55,16 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public TransactionResponse transferBetweenCards(TransactionRequest transactionRequest) {
         Card fromCard = cardService.getCardById(transactionRequest.getFromCardId())
-                .orElseThrow(() -> new RuntimeException("Source account not found"));
+                .orElseThrow(() -> new TransferException(ApiMessages.SOURCE_ACCOUNT_NOT_FOUND.getMessage()));
         
         Card toCard = cardService.getCardById(transactionRequest.getToCardId())
-                .orElseThrow(() -> new RuntimeException("Destination account not found"));
+                .orElseThrow(() -> new TransferException(ApiMessages.DESTINATION_ACCOUNT_NOT_FOUND.getMessage()));
         
         if (fromCard.getBalance().compareTo(transactionRequest.getAmount()) < 0) {
-            throw new RuntimeException("Insufficient funds");
+            throw new InsufficientFundsException(fromCard.getBalance(), transactionRequest.getAmount());
         }
         if (fromCard.getStatus() != CardStatus.ACTIVE || toCard.getStatus() != CardStatus.ACTIVE) {
-            throw new RuntimeException("Both cards must be active for transfer");
+            throw new ActiveCardsException(fromCard.getStatus(), toCard.getStatus());
         }
         
         Transaction transaction = new Transaction();
@@ -83,13 +87,13 @@ public class TransactionServiceImpl implements TransactionService {
         } catch (Exception e) {
             savedTransaction.setStatus(TransactionStatus.FAILED);
             transactionRepository.save(savedTransaction);
-            throw new RuntimeException("Transfer failed: " + e.getMessage());
+            throw new TransferException(ApiMessages.TRANSACTION_FAILED.getMessage());
         }
     }
 
     @Override
     public Transaction getTransactionById(Long id) {
         return transactionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElseThrow(() -> new TransferException(ApiMessages.TRANSACTION_NOT_FOUND.getMessage()));
     }
 }

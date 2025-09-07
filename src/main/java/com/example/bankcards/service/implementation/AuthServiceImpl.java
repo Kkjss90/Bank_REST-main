@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
         return new JwtAuthenticationResponse(jwt);
     }
 
-    public JwtAuthenticationResponse signIn(SignInRequest request) {
+    public JwtAuthenticationResponse signIn(SignInRequest request) throws InvalidTokenException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getUsername(),
                 request.getPassword()
@@ -63,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
             try {
                 jwtService.saveToken(newToken);
             } catch (InvalidTokenException ex) {
-                throw new RuntimeException(ex);
+                throw new InvalidTokenException(ex.getMessage());
             }
             return new JwtAuthenticationResponse(newToken);
         }

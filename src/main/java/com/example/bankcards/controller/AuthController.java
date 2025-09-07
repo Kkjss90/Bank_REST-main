@@ -3,6 +3,7 @@ package com.example.bankcards.controller;
 import com.example.bankcards.dto.request.SignInRequest;
 import com.example.bankcards.dto.request.UserRequest;
 import com.example.bankcards.dto.response.JwtAuthenticationResponse;
+import com.example.bankcards.exception.InvalidTokenException;
 import com.example.bankcards.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,7 +31,7 @@ public class AuthController {
 
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/sign-in")
-    public JwtAuthenticationResponse signIn(@RequestBody @Valid SignInRequest request) {
+    public JwtAuthenticationResponse signIn(@RequestBody @Valid SignInRequest request) throws InvalidTokenException {
         return authenticationService.signIn(request);
     }
 }

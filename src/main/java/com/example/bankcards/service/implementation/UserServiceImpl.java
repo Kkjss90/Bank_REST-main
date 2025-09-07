@@ -4,9 +4,11 @@ import com.example.bankcards.dto.request.UserRequest;
 import com.example.bankcards.dto.request.UserUpdateRequest;
 import com.example.bankcards.dto.response.UserResponse;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.mapper.Mapper;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.UserService;
+import com.example.bankcards.util.ApiMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -71,7 +73,7 @@ public class UserServiceImpl implements UserService {
                     user.setRole(userDetails.getRole());
                     return userRepository.save(user);
                 })
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(ApiMessages.USER_NOT_FOUND.getMessage()));
     }
 
     @Override
