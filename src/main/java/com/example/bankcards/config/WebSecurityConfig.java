@@ -30,8 +30,6 @@ import lombok.RequiredArgsConstructor;
 @EnableTransactionManagement
 @RequiredArgsConstructor
 @EnableMethodSecurity(prePostEnabled = true)
-//@ComponentScan(basePackages = {
-//        "com.example.bankcards"})
 public class WebSecurityConfig {
 
     private static final String[] PUBLIC_URLS = {

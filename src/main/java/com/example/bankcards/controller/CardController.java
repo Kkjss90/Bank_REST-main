@@ -42,6 +42,7 @@ public class CardController {
 
 
     @GetMapping("/my-cards")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Получить мои карты", description = "Возвращает список карт текущего пользователя")
     public ResponseEntity<Map<String, Object>> getUserCards(Authentication authentication,
                                                             @RequestParam(required = false) Integer page,
@@ -49,9 +50,6 @@ public class CardController {
                                                             @RequestParam(required = false) String sortBy,
                                                             @RequestParam(required = false) String direction,
                                                             @RequestParam(required = false) String search) {
-        if (authentication == null) {
-            return ResponseEntity.badRequest().build();
-        }
         Pageable pageable = paginationUtils.createPageable(page, size, sortBy, direction);
         Page<CardResponse> cardsPage = cardService.getUserCardsPaginated(
                 userService.getUserByUsername(authentication.getName()), search, pageable);
@@ -60,31 +58,25 @@ public class CardController {
     }
 
     @GetMapping("/my-cards/active")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Получить мои активные карты", description = "Возвращает список активных карт текущего пользователя")
     public ResponseEntity<List<CardResponse>> getUserCardsActive(Authentication authentication) {
-        if (authentication == null) {
-            return ResponseEntity.badRequest().build();
-        }
         List<CardResponse> cards = cardService.getCardsByUserAndStatus(userService.getUserByUsername(authentication.getName()), CardStatus.ACTIVE);
         return ResponseEntity.ok(cards);
     }
 
     @PostMapping("/create")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Создать карту", description = "Создает новую карту для текущего пользователя")
     public ResponseEntity<CardResponse> createCard(Authentication authentication, @Valid @RequestBody CardRequest cardRequest) {
-        if (authentication == null) {
-            return ResponseEntity.badRequest().build();
-        }
         CardResponse cardResponse = cardService.createCard(userService.getUserByUsername(authentication.getName()), cardRequest.getCurrency());
         return ResponseEntity.ok(cardResponse);
     }
 
     @PostMapping("/block/{cardId}")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Заблокировать карту", description = "Блокирует карту для текущего пользователя")
-    public ResponseEntity<?> blockCard(Authentication authentication, @Valid @PathVariable Long cardId) {
-        if (authentication == null) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<?> blockCard(@Valid @PathVariable Long cardId) {
         if (cardService.cardExists(cardId)) {
             cardService.blockCard(cardId);
             return ResponseEntity.ok().build();
@@ -93,11 +85,9 @@ public class CardController {
     }
 
     @PostMapping("/transfer")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Перевод", description = "Перевод между своими картами")
-    public ResponseEntity<?> transferCard(Authentication authentication, @Valid @RequestBody TransactionRequest transactionRequest) {
-        if (authentication == null) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<?> transferCard(@Valid @RequestBody TransactionRequest transactionRequest) {
         try {
             TransactionResponse transaction = transactionService.transferBetweenCards(transactionRequest);
             return ResponseEntity.ok(transaction);
@@ -107,11 +97,9 @@ public class CardController {
     }
 
     @GetMapping("/balance")
+    @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Просмотр баланса",description = "Просмотр баланса карты")
-    public ResponseEntity<BigDecimal> getBalance(Authentication authentication, @Valid @RequestParam String cardNumber) {
-        if (authentication == null) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<BigDecimal> getBalance(@Valid @RequestParam String cardNumber) {
         BigDecimal balance = cardService.getCardByNumber(cardNumber).get().getBalance();
         return ResponseEntity.ok(balance);
     }

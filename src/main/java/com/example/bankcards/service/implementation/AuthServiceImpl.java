@@ -51,12 +51,8 @@ public class AuthServiceImpl implements AuthService {
                 request.getPassword()
         ));
 
-//        var user = userService
-//                .userDetailsService()
-//                .loadUserByUsername(request.getUsername());
         User user = userService.getUserByUsername(request.getUsername());
 
-        //var jwt = jwtService.generateToken(user);
         Token jwt = tokenRepository.findByUser(user);
         try {
             jwtService.validateToken(jwt.getToken());
