@@ -60,7 +60,7 @@ docker-compose up -d
 
 ### Карты
 
-- GET ```/api/cards/my-cards``` - получение списка своих карт
+- GET ```/api/cards/my-cards``` - получение списка своих карт (с возможностью поиска + пагинация)
 - GET ```/api/cards/my-cards/active``` - получение списка своих активных карт
 - GET ```/api/cards/balance``` - просмотр баланса карты
 - POST ```/api/cards/create``` - создание новой карты
