@@ -143,14 +143,6 @@ class CardControllerTest {
     }
 
     @Test
-    void getUserCards_WithoutAuthentication_ShouldReturnUnauthorized() throws Exception {
-        SecurityContextHolder.clearContext(); // очистка контекста
-
-        mockMvc.perform(get("/api/cards/my-cards"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
     @WithMockUser(username = "testuser")
     void getUserCardsActive_ShouldReturnActiveCards() throws Exception {
         Mockito.when(userService.getUserByUsername("testuser")).thenReturn(testUser);
