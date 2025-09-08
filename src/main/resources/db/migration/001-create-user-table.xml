@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
-    <changeSet id="create_user_table_seq" author="your_name">
+    <changeSet id="create_user_table_seq" author="kkjss90">
         <createSequence
                 sequenceName="user_id_seq"
                 startValue="1"
@@ -14,7 +14,7 @@
                 cycle="false"/>
     </changeSet>
 
-    <changeSet id="create_user_table" author="your_name">
+    <changeSet id="create_user_table" author="kkjss90">
         <createTable tableName="user_bank">
             <column name="id" type="BIGINT" defaultValueSequenceNext="user_id_seq">
                 <constraints primaryKey="true" nullable="false"/>
