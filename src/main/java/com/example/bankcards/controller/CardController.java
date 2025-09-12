@@ -74,23 +74,23 @@ public class CardController {
     @PostMapping("/block/{cardId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Заблокировать карту", description = "Блокирует карту для текущего пользователя")
-    public ResponseEntity<?> blockCard(@Valid @PathVariable Long cardId) {
+    public ResponseEntity<Void> blockCard(@Valid @PathVariable Long cardId) {
         if (cardService.cardExists(cardId)) {
             cardService.blockCard(cardId);
             return ResponseEntity.ok().build();
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/transfer")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Перевод", description = "Перевод между своими картами")
-    public ResponseEntity<?> transferCard(@Valid @RequestBody TransactionRequest transactionRequest) {
+    public ResponseEntity<TransactionResponse> transferCard(@Valid @RequestBody TransactionRequest transactionRequest) {
         try {
             TransactionResponse transaction = transactionService.transferBetweenCards(transactionRequest);
             return ResponseEntity.ok(transaction);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
@@ -98,14 +98,15 @@ public class CardController {
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Просмотр баланса",description = "Просмотр баланса карты")
     public ResponseEntity<BigDecimal> getBalance(@Valid @RequestParam String cardNumber) {
-        BigDecimal balance = cardService.getCardByNumber(cardNumber).get().getBalance();
-        return ResponseEntity.ok(balance);
+        return cardService.getCardByNumber(cardNumber)
+                .map(card -> ResponseEntity.ok(card.getBalance()))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/admin/all-cards")
     @Operation(summary = "Посмотреть все карты пользователей", description = "Показывает список всех карт пользователей")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> getAllCards() {
+    public ResponseEntity<List<CardResponse>> getAllCards() {
         List<CardResponse> cardResponses = cardService.getAllCards();
         return ResponseEntity.ok(cardResponses);
     }
@@ -114,12 +115,12 @@ public class CardController {
     @PostMapping("/admin/create/{username}")
     @Operation(summary = "Создать карту для пользователя", description = "Создает новую карту для указанного пользователя")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> createCardForUser(@Parameter(description = "Имя пользователя") @PathVariable String username, @Valid @RequestBody String currency) {
+    public ResponseEntity<CardResponse> createCardForUser(@Parameter(description = "Имя пользователя") @PathVariable String username, @Valid @RequestBody String currency) {
         try {
             CardResponse cardResponse = cardService.createCard(userService.getUserByUsername(username), currency);
             return ResponseEntity.ok(cardResponse);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(null);
         }
 
     }
@@ -127,22 +128,22 @@ public class CardController {
     @DeleteMapping("/admin/delete/{cardId}")
     @Operation(summary = "Удалить карту", description = "Полностью удаляет карту из системы")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> deleteCard(@PathVariable Long cardId) {
+    public ResponseEntity<Void> deleteCard(@PathVariable Long cardId) {
         if (cardService.cardExists(cardId)) {
             cardService.deleteCard(cardId);
             return ResponseEntity.ok().build();
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/admin/update/{cardId}")
     @Operation(summary = "Активировать карту", description = "Активирует выбранную карту")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<?> updateCard(@PathVariable Long cardId) {
+    public ResponseEntity<Void> updateCard(@PathVariable Long cardId) {
         if (cardService.cardExists(cardId)) {
             cardService.activateCard(cardId);
             return ResponseEntity.ok().build();
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.notFound().build();
     }
 }

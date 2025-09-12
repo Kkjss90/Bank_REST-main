@@ -24,7 +24,7 @@ public class UserController {
 
     @DeleteMapping("/delete/{userId}")
     @Operation(summary = "Удалить пользователя", description = "Удаляет пользователя пользователя")
-    public ResponseEntity<?> delete(@PathVariable Long userId) {
+    public ResponseEntity<Void> delete(@PathVariable Long userId) {
         if (userService.getUserById(userId).isPresent()) {
             userService.deleteUser(userId);
             return ResponseEntity.ok().build();
@@ -34,14 +34,14 @@ public class UserController {
 
     @PutMapping("/create")
     @Operation (summary = "Создать пользователя", description = "Создание пользователя")
-    public ResponseEntity<?> create(@Valid @RequestBody UserRequest userRequest) {
+    public ResponseEntity<Void> create(@Valid @RequestBody UserRequest userRequest) {
         userService.createUser(userRequest);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/role-update/{user_id}")
     @Operation (summary = "Изменение пользователя", description = "Изменение имени, фамилии, почты и роли пользователя")
-    public ResponseEntity<?> updateRole(@PathVariable Long user_id, @Valid @RequestBody UserUpdateRequest userDetails) {
+    public ResponseEntity<Void> updateRole(@PathVariable Long user_id, @Valid @RequestBody UserUpdateRequest userDetails) {
         userService.updateUser(user_id, userDetails);
         return ResponseEntity.ok().build();
     }
