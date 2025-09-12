@@ -5,7 +5,16 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
+    <preConditions>
+        <dbms type="postgresql, h2, mysql, oracle"/>
+    </preConditions>
+
     <changeSet id="create_user_table_seq" author="kkjss90">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="user_id_seq"/>
+            </not>
+        </preConditions>
         <createSequence
                 sequenceName="user_id_seq"
                 startValue="1"
@@ -15,6 +24,11 @@
     </changeSet>
 
     <changeSet id="create_user_table" author="kkjss90">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user_bank"/>
+            </not>
+        </preConditions>
         <createTable tableName="user_bank">
             <column name="id" type="BIGINT" defaultValueSequenceNext="user_id_seq">
                 <constraints primaryKey="true" nullable="false"/>

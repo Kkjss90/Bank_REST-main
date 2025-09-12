@@ -11,6 +11,7 @@ import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.util.ApiMessages;
 import com.example.bankcards.util.CardNumberEncryptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,19 +27,13 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CardServiceImpl implements CardService {
     
     private final CardRepository cardRepository;
     private final CardNumberEncryptor cardNumberEncryptor;
     private  final Mapper mapper;
 
-    @Autowired
-    public CardServiceImpl(CardRepository cardRepository, CardNumberEncryptor cardNumberEncryptor, Mapper mapper) {
-        this.cardRepository = cardRepository;
-        this.cardNumberEncryptor = cardNumberEncryptor;
-        this.mapper = mapper;
-    }
-    
     @Override
     public List<CardResponse> getAllCards() {
         List<Card> cards = cardRepository.findAll();

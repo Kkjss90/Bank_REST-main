@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,15 +31,12 @@ import java.util.Map;
 @RequestMapping("/api/cards")
 @Tag(name = "Cards", description = "Card CRUD")
 @SecurityRequirement(name = "Bearer Authentication")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CardController {
-    @Autowired
-    private CardService cardService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private TransactionService transactionService;
-    @Autowired
-    private PaginationUtils paginationUtils;
+    private final CardService cardService;
+    private final UserService userService;
+    private final TransactionService transactionService;
+    private final PaginationUtils paginationUtils;
 
 
     @GetMapping("/my-cards")

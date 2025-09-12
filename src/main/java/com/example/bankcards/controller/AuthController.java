@@ -17,10 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/auth")
-@RequiredArgsConstructor
 @Tag(name = "Auth Controller", description = "Operations for authentication")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthController {
-    @Autowired
     private final AuthService authenticationService;
 
     @Operation(summary = "Регистрация пользователя")

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin/user")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @Tag(name = "Управление пользователями", description = "Административные функции управления пользователями")
 @SecurityRequirement(name = "Bearer Authentication")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @DeleteMapping("/delete/{userId}")
     @Operation(summary = "Удалить пользователя", description = "Удаляет пользователя пользователя")

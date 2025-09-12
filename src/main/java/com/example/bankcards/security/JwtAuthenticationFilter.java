@@ -22,12 +22,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 @Component
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
     private final UserDetailsService userDetailsService;
-    @Autowired
     private final TokenService tokenService;
 
     @Override

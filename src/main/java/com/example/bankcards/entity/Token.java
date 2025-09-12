@@ -3,15 +3,15 @@ package com.example.bankcards.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
-@Data
+@Getter
+@Setter
 @Table(name = "token")
 public class Token {
 
@@ -38,6 +38,39 @@ public class Token {
         this.token = token;
         this.expiryAt = expiryAt;
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Token otherToken = (Token) o;
+
+        if (token != null && otherToken.token != null) {
+            return Objects.equals(token, otherToken.token);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if (token != null) {
+            return token.hashCode();
+        }
+        return super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Token{" +
+                "id=" + id +
+                ", token='" + token + '\'' +
+                ", createdAt=" + createdAt +
+                ", expiryAt=" + expiryAt +
+                ", userId=" + (user != null ? user.getId() : "null") + // Только ID пользователя
+                '}';
     }
 
 }

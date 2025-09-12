@@ -5,6 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
+    <preConditions>
+        <dbms type="postgresql, h2, mysql, oracle"/>
+    </preConditions>
+
     <include file="/db/migration/001-create-user-table.xml"/>
     <include file="/db/migration/002-create-card-table.xml"/>
     <include file="/db/migration/003-create-transaction-table.xml"/>

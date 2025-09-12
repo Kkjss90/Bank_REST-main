@@ -11,10 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "user_bank")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Builder
 @AllArgsConstructor
@@ -73,4 +75,40 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (username != null && user.username != null) {
+            return Objects.equals(username, user.username);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if (username != null) {
+            return username.hashCode();
+        }
+        return super.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", createdAt=" + createdAt +
+                ", role=" + role +
+                '}';
+    }
+
 }

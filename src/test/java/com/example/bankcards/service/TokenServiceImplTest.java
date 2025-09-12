@@ -69,9 +69,9 @@ class TokenServiceImplTest {
         token.setUser(user);
 
         validToken = Jwts.builder()
-                .setSubject("testuser")
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .subject("testuser")
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

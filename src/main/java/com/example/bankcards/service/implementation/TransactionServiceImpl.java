@@ -14,6 +14,7 @@ import com.example.bankcards.repository.TransactionRepository;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.service.TransactionService;
 import com.example.bankcards.util.ApiMessages;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,20 +23,13 @@ import java.util.List;
 
 @Service
 @Transactional
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final CardService cardService;
     private final Mapper mapper;
 
-    @Autowired
-    public TransactionServiceImpl(TransactionRepository transactionRepository, 
-                                 CardService cardService, Mapper mapper) {
-        this.transactionRepository = transactionRepository;
-        this.cardService = cardService;
-        this.mapper = mapper;
-    }
-    
     @Override
     public List<Transaction> getAllTransactions() {
         return transactionRepository.findAll();

@@ -64,12 +64,12 @@ public class TokenServiceImpl implements TokenService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
     private String doGenerateToken(UserDetails userDetails, Date expiry) {
-        return Jwts.builder().setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
+        return Jwts.builder().subject(userDetails.getUsername())
+                .issuedAt(new Date())
                 .claim("authorities", userDetails.getAuthorities().stream()
                         .map(grantedAuthority -> grantedAuthority.getAuthority())
                         .collect(Collectors.toList()))
-                .setExpiration(expiry)
+                .expiration(expiry)
                 .signWith(key(), SignatureAlgorithm.HS256).compact();
     }
 

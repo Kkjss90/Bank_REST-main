@@ -21,17 +21,13 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthServiceImpl implements AuthService {
-    @Autowired
+
     private final UserService userService;
-    @Autowired
     private final TokenService jwtService;
-    @Autowired
-    private final PasswordEncoder passwordEncoder;
-    @Autowired
+//    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    @Autowired
     private final TokenRepository tokenRepository;
 
     @SneakyThrows

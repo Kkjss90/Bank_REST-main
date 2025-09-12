@@ -5,7 +5,19 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
 
+    <preConditions>
+        <dbms type="postgresql, h2, mysql, oracle"/>
+    </preConditions>
+
     <changeSet id="create_card_table" author="kkjss90">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="user_bank"/>
+                <not>
+                    <tableExists tableName="card"/>
+                </not>
+            </and>
+        </preConditions>
         <createTable tableName="card">
             <column name="id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>

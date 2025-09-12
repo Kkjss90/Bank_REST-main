@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <preConditions>
+        <dbms type="postgresql, h2, mysql, oracle"/>
+    </preConditions>
+
+    <changeSet id="insert-test-users" author="kkjss90">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <tableExists tableName="user_bank"/>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM user_bank WHERE username IN ('user1', 'user12', 'admin')
+                </sqlCheck>
+            </and>
+        </preConditions>
+
+        <!-- Пароль: user12345678 -->
+        <insert tableName="user_bank">
+            <column name="username" value="user1"/>
+            <column name="password" value="$2a$12$y2mWf1UVlQcz.Hufqhb59u3fDNay9kyUK6jQa2gJMVcovuKoVKl9u"/>
+            <column name="first_name" value="user1"/>
+            <column name="last_name" value="user2"/>
+            <column name="email" value="user1@example.com"/>
+            <column name="role" value="ROLE_USER"/>
+            <column name="created_at" valueDate="2025-01-01T00:00:00"/>
+        </insert>
+
+        <!-- Пароль: user12345678 -->
+        <insert tableName="user_bank">
+            <column name="username" value="user12"/>
+            <column name="password" value="$2a$12$y2mWf1UVlQcz.Hufqhb59u3fDNay9kyUK6jQa2gJMVcovuKoVKl9u"/>
+            <column name="first_name" value="user12"/>
+            <column name="last_name" value="user21"/>
+            <column name="email" value="user12@example.com"/>
+            <column name="role" value="ROLE_USER"/>
+            <column name="created_at" valueDate="2025-01-01T00:00:00"/>
+        </insert>
+
+        <!-- Пароль: admin1234 -->
+        <insert tableName="user_bank">
+            <column name="username" value="admin"/>
+            <column name="password" value="$2a$12$0j7gMBACX0PaGsCGyIInhugaXBA7YHN/H91eRE3fmrfQCB97kzofC"/>
+            <column name="first_name" value="admin1"/>
+            <column name="last_name" value="admin2"/>
+            <column name="email" value="admin@bank.com"/>
+            <column name="role" value="ROLE_ADMIN"/>
+            <column name="created_at" valueDate="2025-01-01T00:00:00"/>
+        </insert>
+
+        <rollback>
+            <delete tableName="user_bank">
+                <where>username in ('user1', 'user2', 'admin')</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
