@@ -8,6 +8,9 @@ import lombok.*;
 import java.util.Date;
 import java.util.Objects;
 
+/**
+ * The type Token.
+ */
 @Entity
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Getter
@@ -34,12 +37,25 @@ public class Token {
     @JoinColumn(name = "user_id")
     private User user;
 
+    /**
+     * Instantiates a new Token.
+     *
+     * @param token    the token
+     * @param expiryAt the expiry at
+     * @param user     the user
+     */
     public Token(String token, Date expiryAt, User user) {
         this.token = token;
         this.expiryAt = expiryAt;
         this.user = user;
     }
 
+    /**
+     * Equals boolean.
+     *
+     * @param o the o
+     * @return the boolean
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -54,6 +70,11 @@ public class Token {
         return false;
     }
 
+    /**
+     * Hash code int.
+     *
+     * @return the int
+     */
     @Override
     public int hashCode() {
         if (token != null) {
@@ -62,6 +83,11 @@ public class Token {
         return super.hashCode();
     }
 
+    /**
+     * To string string.
+     *
+     * @return the string
+     */
     @Override
     public String toString() {
         return "Token{" +

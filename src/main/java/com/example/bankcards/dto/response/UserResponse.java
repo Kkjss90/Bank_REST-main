@@ -3,6 +3,9 @@ package com.example.bankcards.dto.response;
 import lombok.Data;
 import java.time.LocalDateTime;
 
+/**
+ * The type User response.
+ */
 @Data
 public class UserResponse {
     private Long id;
@@ -12,8 +15,19 @@ public class UserResponse {
     private String lastName;
     private String role;
     private LocalDateTime createdAt;
-    
-    public UserResponse(Long id, String username, String email, String firstName, 
+
+    /**
+     * Instantiates a new User response.
+     *
+     * @param id        the id
+     * @param username  the username
+     * @param email     the email
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @param role      the role
+     * @param createdAt the created at
+     */
+    public UserResponse(Long id, String username, String email, String firstName,
                        String lastName, String role, LocalDateTime createdAt) {
         this.id = id;
         this.username = username;

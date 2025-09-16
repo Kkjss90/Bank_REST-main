@@ -10,9 +10,17 @@ import io.swagger.v3.oas.models.Components;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * The type Swagger config.
+ */
 @Configuration
 public class SwaggerConfig {
 
+    /**
+     * Bank cards open api.
+     *
+     * @return the open api
+     */
     @Bean
     public OpenAPI bankCardsOpenAPI() {
         return new OpenAPI()

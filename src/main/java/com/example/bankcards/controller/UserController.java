@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The type User controller.
+ */
 @RestController
 @RequestMapping("/api/admin/user")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -22,6 +25,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService userService;
 
+    /**
+     * Delete user.
+     *
+     * @param userId the user id
+     * @return the response entity
+     */
     @DeleteMapping("/delete/{userId}")
     @Operation(summary = "Удалить пользователя", description = "Удаляет пользователя пользователя")
     public ResponseEntity<Void> delete(@PathVariable Long userId) {
@@ -32,6 +41,12 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Create user.
+     *
+     * @param userRequest the user request
+     * @return the response entity
+     */
     @PutMapping("/create")
     @Operation (summary = "Создать пользователя", description = "Создание пользователя")
     public ResponseEntity<Void> create(@Valid @RequestBody UserRequest userRequest) {
@@ -39,6 +54,13 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Update role.
+     *
+     * @param user_id     the user id
+     * @param userDetails the user details
+     * @return the response entity
+     */
     @PatchMapping("/role-update/{user_id}")
     @Operation (summary = "Изменение пользователя", description = "Изменение имени, фамилии, почты и роли пользователя")
     public ResponseEntity<Void> updateRole(@PathVariable Long user_id, @Valid @RequestBody UserUpdateRequest userDetails) {

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The type Auth controller.
+ */
 @RestController
 @RequestMapping("api/auth")
 @Tag(name = "Auth Controller", description = "Operations for authentication")
@@ -22,12 +25,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authenticationService;
 
+    /**
+     * Sign up jwt authentication response.
+     *
+     * @param request the request
+     * @return the jwt authentication response
+     */
     @Operation(summary = "Регистрация пользователя")
     @PostMapping("/sign-up")
     public JwtAuthenticationResponse signUp(@RequestBody @Valid UserRequest request) {
         return authenticationService.signUp(request);
     }
 
+    /**
+     * Sign in jwt authentication response.
+     *
+     * @param request the request
+     * @return the jwt authentication response
+     * @throws InvalidTokenException the invalid token exception
+     */
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/sign-in")
     public JwtAuthenticationResponse signIn(@RequestBody @Valid SignInRequest request) throws InvalidTokenException {

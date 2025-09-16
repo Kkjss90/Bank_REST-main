@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * The type User request.
+ */
 @Data
 public class UserRequest {
     @Schema(description = "Логин", example = "Kkjss90")

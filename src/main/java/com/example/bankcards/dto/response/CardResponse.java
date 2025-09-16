@@ -5,6 +5,9 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+/**
+ * The type Card response.
+ */
 @Data
 public class CardResponse {
     private String maskedNumber;
@@ -16,6 +19,18 @@ public class CardResponse {
     private boolean active;
     private boolean expired;
 
+    /**
+     * Instantiates a new Card response.
+     *
+     * @param maskedNumber the masked number
+     * @param userFullName the user full name
+     * @param currency     the currency
+     * @param expiryDate   the expiry date
+     * @param status       the status
+     * @param balance      the balance
+     * @param active       the active
+     * @param expired      the expired
+     */
     public CardResponse(String maskedNumber, String userFullName,String currency,
                         LocalDate expiryDate, String status, BigDecimal balance, boolean active, boolean expired) {
         this.maskedNumber = maskedNumber;

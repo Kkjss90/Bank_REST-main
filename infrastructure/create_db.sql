@@ -1,2 +1,2 @@
-DROP DATABASE IF EXISTS bank;
-create database bank;
+-- DROP DATABASE IF EXISTS bank;
+-- create database bank;

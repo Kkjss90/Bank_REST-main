@@ -19,6 +19,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * The type Token service.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -42,11 +46,24 @@ public class TokenServiceImpl implements TokenService {
     private final TokenRepository tokenRepository;
 
 
+    /**
+     * Gets username from token.
+     *
+     * @param token the token
+     * @return the username from token
+     * @throws InvalidTokenException the invalid token exception
+     */
     @Override
     public String getUsernameFromToken(String token) throws InvalidTokenException {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
+    /**
+     * Generate token string.
+     *
+     * @param userDetails the user details
+     * @return the string
+     */
     @Override
     public String generateToken(UserDetails userDetails) {
         log.info("Generating token for user: " + userDetails.getUsername());
@@ -54,6 +71,13 @@ public class TokenServiceImpl implements TokenService {
                 new Date(System.currentTimeMillis() + expiration));
     }
 
+    /**
+     * Generate token string.
+     *
+     * @param userDetails the user details
+     * @param expiry      the expiry
+     * @return the string
+     */
     @Override
     public String generateToken(UserDetails userDetails, Date expiry) {
         log.info("Generating token for user: " + userDetails.getUsername());
@@ -67,12 +91,19 @@ public class TokenServiceImpl implements TokenService {
         return Jwts.builder().subject(userDetails.getUsername())
                 .issuedAt(new Date())
                 .claim("authorities", userDetails.getAuthorities().stream()
-                        .map(grantedAuthority -> grantedAuthority.getAuthority())
+                        .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()))
                 .expiration(expiry)
-                .signWith(key(), SignatureAlgorithm.HS256).compact();
+                .signWith(key()).compact();
     }
 
+    /**
+     * Load user by username user details.
+     *
+     * @param accountNumber the account number
+     * @return the user details
+     * @throws UsernameNotFoundException the username not found exception
+     */
     @Override
     public UserDetails loadUserByUsername(String accountNumber) throws UsernameNotFoundException {
         val user = userRepository.findByUsername(accountNumber)
@@ -85,12 +116,28 @@ public class TokenServiceImpl implements TokenService {
                 .build();
     }
 
+    /**
+     * Gets expiration date from token.
+     *
+     * @param token the token
+     * @return the expiration date from token
+     * @throws InvalidTokenException the invalid token exception
+     */
     @Override
     public Date getExpirationDateFromToken(String token)
             throws InvalidTokenException {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
+    /**
+     * Gets claim from token.
+     *
+     * @param <T>            the type parameter
+     * @param token          the token
+     * @param claimsResolver the claims resolver
+     * @return the claim from token
+     * @throws InvalidTokenException the invalid token exception
+     */
     @Override
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver)
             throws InvalidTokenException {
@@ -123,6 +170,12 @@ public class TokenServiceImpl implements TokenService {
         }
     }
 
+    /**
+     * Save token.
+     *
+     * @param token the token
+     * @throws InvalidTokenException the invalid token exception
+     */
     @Override
     public void saveToken(String token) throws InvalidTokenException {
         if (tokenRepository.findByToken(token) != null) {
@@ -145,6 +198,12 @@ public class TokenServiceImpl implements TokenService {
         }
     }
 
+    /**
+     * Validate token.
+     *
+     * @param token the token
+     * @throws InvalidTokenException the invalid token exception
+     */
     @Override
     public void validateToken(String token) throws InvalidTokenException {
         if (tokenRepository.findByToken(token) == null) {
@@ -152,6 +211,11 @@ public class TokenServiceImpl implements TokenService {
         }
     }
 
+    /**
+     * Invalidate token.
+     *
+     * @param token the token
+     */
     @Override
     @Transactional
     public void invalidateToken(String token) {

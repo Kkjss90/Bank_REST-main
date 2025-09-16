@@ -10,9 +10,18 @@ import com.example.bankcards.entity.User;
 import com.example.bankcards.entity.enums.RoleEnum;
 import org.springframework.stereotype.Component;
 
+/**
+ * The type Mapper.
+ */
 @Component
 public class Mapper {
 
+    /**
+     * Dto to response card response.
+     *
+     * @param card the card
+     * @return the card response
+     */
     public CardResponse dtoToResponse(Card card) {
         return new CardResponse(
                 card.getMaskedNumber(),
@@ -26,6 +35,12 @@ public class Mapper {
         );
     }
 
+    /**
+     * Dto to response transaction response.
+     *
+     * @param transaction the transaction
+     * @return the transaction response
+     */
     public TransactionResponse dtoToResponse(Transaction transaction) {
         return new TransactionResponse(
                 transaction.getId(),
@@ -38,6 +53,12 @@ public class Mapper {
         );
     }
 
+    /**
+     * Dto to response user response.
+     *
+     * @param user the user
+     * @return the user response
+     */
     public UserResponse dtoToResponse(User user) {
         String role = user.getRole().toString();
 
@@ -52,6 +73,12 @@ public class Mapper {
         );
     }
 
+    /**
+     * Request to dto user.
+     *
+     * @param request the request
+     * @return the user
+     */
     public User RequestToDto(UserRequest request){
         return User.builder()
                 .username(request.getUsername())

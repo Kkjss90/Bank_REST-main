@@ -20,6 +20,9 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * The type Auth service.
+ */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthServiceImpl implements AuthService {
@@ -30,6 +33,12 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final TokenRepository tokenRepository;
 
+    /**
+     * Sign up jwt authentication response.
+     *
+     * @param userRequest the user request
+     * @return the jwt authentication response
+     */
     @SneakyThrows
     public JwtAuthenticationResponse signUp(UserRequest userRequest) {
 
@@ -41,6 +50,13 @@ public class AuthServiceImpl implements AuthService {
         return new JwtAuthenticationResponse(jwt);
     }
 
+    /**
+     * Sign in jwt authentication response.
+     *
+     * @param request the request
+     * @return the jwt authentication response
+     * @throws InvalidTokenException the invalid token exception
+     */
     public JwtAuthenticationResponse signIn(SignInRequest request) throws InvalidTokenException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 request.getUsername(),

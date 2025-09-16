@@ -8,6 +8,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+/**
+ * The type Card.
+ */
 @Entity
 @Table(name = "card")
 @Getter
@@ -38,6 +41,12 @@ public class Card {
 
     private BigDecimal balance = BigDecimal.ZERO;
 
+    /**
+     * Equals boolean.
+     *
+     * @param o the o
+     * @return the boolean
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -52,6 +61,11 @@ public class Card {
         return false;
     }
 
+    /**
+     * Hash code int.
+     *
+     * @return the int
+     */
     @Override
     public int hashCode() {
         if (cardNumber != null) {
@@ -60,6 +74,11 @@ public class Card {
         return super.hashCode();
     }
 
+    /**
+     * To string.
+     *
+     * @return the string
+     */
     @Override
     public String toString() {
         return "Card{" +

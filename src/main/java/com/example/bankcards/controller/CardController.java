@@ -27,6 +27,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The type Card controller.
+ */
 @RestController
 @RequestMapping("/api/cards")
 @Tag(name = "Cards", description = "Card CRUD")
@@ -39,6 +42,17 @@ public class CardController {
     private final PaginationUtils paginationUtils;
 
 
+    /**
+     * Gets user cards.
+     *
+     * @param authentication the authentication
+     * @param page           the page
+     * @param size           the size
+     * @param sortBy         the sort by
+     * @param direction      the direction
+     * @param search         the search
+     * @return the user cards
+     */
     @GetMapping("/my-cards")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Получить мои карты", description = "Возвращает список карт текущего пользователя")
@@ -55,6 +69,12 @@ public class CardController {
         return ResponseEntity.ok(paginationUtils.buildPaginationResponse(cardsPage));
     }
 
+    /**
+     * Gets user cards active.
+     *
+     * @param authentication the authentication
+     * @return the user cards active
+     */
     @GetMapping("/my-cards/active")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Получить мои активные карты", description = "Возвращает список активных карт текущего пользователя")
@@ -63,6 +83,13 @@ public class CardController {
         return ResponseEntity.ok(cards);
     }
 
+    /**
+     * Create card.
+     *
+     * @param authentication the authentication
+     * @param cardRequest    the card request
+     * @return the response entity
+     */
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Создать карту", description = "Создает новую карту для текущего пользователя")
@@ -71,6 +98,12 @@ public class CardController {
         return ResponseEntity.ok(cardResponse);
     }
 
+    /**
+     * Block card.
+     *
+     * @param cardId the card id
+     * @return the response entity
+     */
     @PostMapping("/block/{cardId}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Заблокировать карту", description = "Блокирует карту для текущего пользователя")
@@ -82,6 +115,12 @@ public class CardController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Transfer card.
+     *
+     * @param transactionRequest the transaction request
+     * @return the response entity
+     */
     @PostMapping("/transfer")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Перевод", description = "Перевод между своими картами")
@@ -94,6 +133,12 @@ public class CardController {
         }
     }
 
+    /**
+     * Gets balance.
+     *
+     * @param cardNumber the card number
+     * @return the balance
+     */
     @GetMapping("/balance")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "Просмотр баланса",description = "Просмотр баланса карты")
@@ -103,6 +148,11 @@ public class CardController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Gets all cards.
+     *
+     * @return the all cards
+     */
     @GetMapping("/admin/all-cards")
     @Operation(summary = "Посмотреть все карты пользователей", description = "Показывает список всех карт пользователей")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -112,6 +162,13 @@ public class CardController {
     }
 
 
+    /**
+     * Create card for user response entity.
+     *
+     * @param username the username
+     * @param currency the currency
+     * @return the response entity
+     */
     @PostMapping("/admin/create/{username}")
     @Operation(summary = "Создать карту для пользователя", description = "Создает новую карту для указанного пользователя")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -125,6 +182,12 @@ public class CardController {
 
     }
 
+    /**
+     * Delete card.
+     *
+     * @param cardId the card id
+     * @return the response entity
+     */
     @DeleteMapping("/admin/delete/{cardId}")
     @Operation(summary = "Удалить карту", description = "Полностью удаляет карту из системы")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -136,6 +199,12 @@ public class CardController {
         return ResponseEntity.notFound().build();
     }
 
+    /**
+     * Update card.
+     *
+     * @param cardId the card id
+     * @return the response entity
+     */
     @PostMapping("/admin/update/{cardId}")
     @Operation(summary = "Активировать карту", description = "Активирует выбранную карту")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+/**
+ * The type Transaction.
+ */
 @Entity
 @Table(name = "transaction")
 @Getter
@@ -41,6 +44,12 @@ public class Transaction {
     private LocalDateTime createdAt = LocalDateTime.now();
 
 
+    /**
+     * Equals boolean.
+     *
+     * @param o the o
+     * @return the boolean
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -55,6 +64,11 @@ public class Transaction {
         return false;
     }
 
+    /**
+     * Hash code int.
+     *
+     * @return the int
+     */
     @Override
     public int hashCode() {
         if (id != null) {
@@ -63,6 +77,11 @@ public class Transaction {
         return super.hashCode();
     }
 
+    /**
+     * To string string.
+     *
+     * @return the string
+     */
     @Override
     public String toString() {
         return "Transaction{" +

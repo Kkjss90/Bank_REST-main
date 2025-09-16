@@ -13,6 +13,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * The type User.
+ */
 @Entity
 @Table(name = "user_bank")
 @Getter
@@ -51,31 +54,62 @@ public class User implements UserDetails {
     @Column(name = "role", nullable = false)
     private RoleEnum role;
 
+    /**
+     * Gets authorities.
+     *
+     * @return the authorities
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
+    /**
+     * Is account non expired boolean.
+     *
+     * @return the boolean
+     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    /**
+     * Is account non locked boolean.
+     *
+     * @return the boolean
+     */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    /**
+     * Is credentials non expired boolean.
+     *
+     * @return the boolean
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    /**
+     * Is enabled boolean.
+     *
+     * @return the boolean
+     */
     @Override
     public boolean isEnabled() {
         return true;
     }
 
+    /**
+     * Equals boolean.
+     *
+     * @param o the o
+     * @return the boolean
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -90,6 +124,11 @@ public class User implements UserDetails {
         return false;
     }
 
+    /**
+     * Hash code int.
+     *
+     * @return the int
+     */
     @Override
     public int hashCode() {
         if (username != null) {
@@ -98,6 +137,11 @@ public class User implements UserDetails {
         return super.hashCode();
     }
 
+    /**
+     * To string string.
+     *
+     * @return the string
+     */
     @Override
     public String toString() {
         return "User{" +

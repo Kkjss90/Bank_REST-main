@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import java.math.BigDecimal;
 
+/**
+ * The type Transaction request.
+ */
 @Data
 public class TransactionRequest {
     @NotNull
